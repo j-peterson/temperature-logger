@@ -1,0 +1,16 @@
+{
+  "name": "TempProbeSerialTomfoolery",
+  "version": "1.0.0",
+  "description": "A script to log data from the BK Precision 710 RS232 thermometer.",
+  "main": "temperature-logger.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jeff Peterson",
+  "license": "MIT",
+  "dependencies": {
+    "fs": "0.0.2",
+    "moment": "^2.8.4",
+    "serialport": "^1.4.6"
+  }
+}
