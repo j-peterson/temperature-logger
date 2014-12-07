@@ -16,6 +16,9 @@ var SerialPort = serialport.SerialPort;
 var device = process.argv[2];
 // var device = "/dev/tty.USA19H141P1.1";
 var serialOpen = false;
+function time() {
+  return moment().format('YYYY-MM-DDTHH:mm:ss');
+}
 
 if (!device) {
   console.log('You must specify the absolute path to a serial port. For example: /dev/ttyO0');
@@ -32,17 +35,17 @@ if (!device) {
   sp.open(function (error) {
     if(!error) {
       serialOpen = true
-      console.log('Opened serial connection at ' + moment().format('YYYY-MM-DDTHH:mm:ss'));
+      console.log('Opened serial connection at ' + time);
       
       sp.on('data', function (data) {
-        console.log(data, moment().format('YYYY-MM-DDTHH:mm:ss'));
-        fs.write(fd, data.replace(/\s*$/, '').replace(/\s+/g, ',') + ',' + moment().format('YYYY-MM-DDTHH:mm:ss'));
+        console.log(data, time);
+        fs.write(fd, data.match(/\b\d+\.*\d*/)[0] + ',' + data.match(/T|F/)[0] + ',' + time + '\r');
       });
       
       sp.on('close', function (error) {
         clearInterval(timer);
-        console.log('closed serial connection at ' + moment().format('YYYY-MM-DDTHH:mm:ss'));
-      });      
+        console.log('Closed serial connection at ' + time);
+      });
     } else {
       console.log("Error opening serial port - " + error);
       process.exit();
@@ -56,16 +59,16 @@ if(serialOpen) {
   fs.open('./' + file, 'w', function (err, fd) {
     if(!err) {
       // fs.open callback
-      var timer = setInterval(function() {
+      var timer = setInterval(function () {
         sp.write('D', function (err, results) {
-          if(err) { console.log('err: ' + err) };
+          if(err) { console.log('Error sending command "D" to serial port - ' + err) };
         });
       }, 1000);
     } else {
-      console.log('error opening file: ' + err);
+      console.log('Error creating file - ' + err);
     };
   });
-};    
+};
 
 
 
