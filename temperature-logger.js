@@ -9,6 +9,7 @@
     This will collect data from the "main screen" temperature reading in whatever mode and units are active.
     It's recommended that the thermometer be used only be in mode "T1" or "T2" and should not be in modes: "REL", "AVG", "MAX", "MIN", or "T1-T2".
 */
+"use strict";
 var fs = require('fs');
 var serialport = require('serialport');
 var moment = require('moment');
