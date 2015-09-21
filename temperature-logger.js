@@ -21,7 +21,7 @@ var samplePeriod = process.argv[3];
 
 function getSamplePeriod() {
   if (samplePeriod >= 1 && samplePeriod <= 3600) {
-    console.log('Sending requests with a sampling period of ' + samplePeriod + ' seconds')
+    console.log('Sending requests with a sampling period of ' + samplePeriod + ' seconds');
     return samplePeriod * 1000;
   } else if (samplePeriod === undefined) {
     return 1000;
@@ -29,29 +29,34 @@ function getSamplePeriod() {
     console.log('Sample period must be a number of seconds between 1 and 3600');
     process.exit();
   }
-};
+}
+
 function time() {
   return moment().format('YYYY-MM-DD HH:mm:ss');
-};
+}
+
 function getData() {
   console.log('Starting to send data to serial port');
   var timer = setInterval(function () {
     sp.write('D', function (err, results) {   // send 'D' for thermometer primary window display and 'B' for secondary
-      if(err) { console.log('Error sending command "D" to serial port - ' + err) };
+      if(err) { console.err('Error sending command "D" to serial port - ' + err) };
     });
   }, getSamplePeriod());
-};
+}
+
 function writeToFile(fd, buffer) {
   buffer = new Buffer(buffer + '\r\n');
   var offset = 0;
   var length = buffer.length;
   var position = null;
   fs.write(fd, buffer, offset, length, position, function (err, written, buffer) {
+    if(err) { console.err('Error writing to file') };
     // console.log(err, written, buffer);
   });
-};
+}
 
-if(device!==null && fs.existsSync(device)) {
+// fix me - this should be wrapped in a function to isolate from global scope
+if(device !== null && fs.existsSync(device)) {
   var file = device.split('/');
   file = './' + file[file.length - 1] + '_' + moment().format('YY-MM-DDTHHmm') + '.csv';
 
@@ -96,4 +101,4 @@ if(device!==null && fs.existsSync(device)) {
 } else {
   console.log('You must specify the absolute path to a serial port that exists. For example: /dev/ttyO0');
   process.exit();
-};
+}
